@@ -81,7 +81,9 @@ class Update:
         table = Set.empty_status_column(table)
         table = clean_spaces(table)
         if self.__intl:
-            table = table.drop(columns=['accept', 'meta'])
+            # table = table.drop(columns=['accept', 'meta'])
+            print(table.columns)
+            print(table)
         self.__excel.post(table)
         if progress_callback:
             progress_callback(90)
