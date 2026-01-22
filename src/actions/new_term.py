@@ -104,8 +104,22 @@ class NewTerm:
                 # self.__database = Put.lang_row_en_row_code_id(
                 #    old_lang_row[COLUMNS["code_id"]], self.__database, new_en_row[COLUMNS["code_id"]])
                 # and update the beginning date to match the new en row
-                self.__database = Put.lang_row_en_row_code_id_with_beginning_date(
-                    old_lang_row[COLUMNS["code_id"]], self.__database, new_en_row[COLUMNS["code_id"]], self.__config.version_date)
+                #self.__database = Put.lang_row_en_row_code_id_with_beginning_date(
+                #    old_lang_row[COLUMNS["code_id"]], self.__database, new_en_row[COLUMNS["code_id"]], self.__config.version_date)
+                               # keep the term data, but inactivate the old row and create a new one
+                new_lang_row = old_lang_row.copy()
+                new_lang_row[COLUMNS["code_id"]] = Get.next_codeid(self.__database)
+                new_lang_row = Set.lang_row_concept_columns(
+                    new_lang_row, new_en_row)
+                new_lang_row = Set.lang_administrative(
+                    new_en_row, new_lang_row, ADMINISTRATIVE_COLUMNS)
+                new_lang_row = Set.date(new_lang_row, self.__config)
+                # inactivate the old lang row
+                self.__database = Put.inactivate_row(old_lang_row[COLUMNS["code_id"]], self.__database, self.__config.version_date,
+                                                     old_en_row[COLUMNS["inaktivoinnin_selite"]], old_en_row[COLUMNS["edit_comment"]], new_lang_row[COLUMNS["code_id"]])
+                # add the new lang row to the database
+                self.__database = Post.new_row_to_database_table(
+                    new_lang_row, self.__database)
 
     def commit(self) -> 'pd.DataFrame':
         """Main function
