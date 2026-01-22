@@ -39,7 +39,7 @@ class NewTerm:
         Returns:
             pd.Series: The new en row
         """
-        
+
         new_en_row = Set.en_row_code_id(new_en_row, self.__database)
         new_en_row = Set.date(new_en_row, self.__config)
         new_en_row = Set.administrative(new_en_row, old_en_row, self.__config)
@@ -79,12 +79,13 @@ class NewTerm:
             # if it is, set the new lang row term and term ids to the new en row term ids
             if old_lang_row[COLUMNS["legacy_term_id"]] == old_en_row[COLUMNS["legacy_term_id"]]:
                 new_lang_row = old_lang_row.copy()
-                new_lang_row[COLUMNS["code_id"]] = Get.next_codeid(self.__database)
+                new_lang_row[COLUMNS["code_id"]
+                             ] = Get.next_codeid(self.__database)
                 new_lang_row = Set.lang_row_concept_columns(
                     new_lang_row, new_en_row)
                 new_lang_row = Set.lang_administrative(
                     new_en_row, new_lang_row, ADMINISTRATIVE_COLUMNS)
-            
+
                 new_lang_row[COLUMNS["legacy_term_id"]
                              ] = new_en_row[COLUMNS["legacy_term_id"]]
                 new_lang_row[COLUMNS["term_id"]
@@ -100,9 +101,11 @@ class NewTerm:
             else:
                 # if the old lang row term id is not the same as the old en row term id
                 # change only the COLUMNS["en_row_code_id"] = new_en_row code_id
-                self.__database = Put.lang_row_en_row_code_id(
-                    old_lang_row[COLUMNS["code_id"]], self.__database, new_en_row[COLUMNS["code_id"]])
-
+                # self.__database = Put.lang_row_en_row_code_id(
+                #    old_lang_row[COLUMNS["code_id"]], self.__database, new_en_row[COLUMNS["code_id"]])
+                # and update the beginning date to match the new en row
+                self.__database = Put.lang_row_en_row_code_id_with_beginning_date(
+                    old_lang_row[COLUMNS["code_id"]], self.__database, new_en_row[COLUMNS["code_id"]], self.__config.version_date)
 
     def commit(self) -> 'pd.DataFrame':
         """Main function

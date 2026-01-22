@@ -115,3 +115,22 @@ class Put:
         index = Get.index_by_codeid(database, code_id)
         database.loc[index, COLUMNS["en_row_code_id"]] = en_row_code_id
         return database
+    
+
+    @staticmethod
+    def lang_row_en_row_code_id_with_beginning_date(code_id: int, database: 'pd.DataFrame', en_row_code_id: int, beginning_date: str) -> 'pd.DataFrame':
+        """Updates the en row code id and beginning date of a lang row in the database
+
+        Args:
+            code_id (int): The code id of the row to be updated
+            database (pd.DataFrame): The database
+            en_row_code_id (int): The en row code id
+            beginning_date (str): The new beginning date
+
+        Returns:
+            pd.DataFrame: The updated database
+        """
+        index = Get.index_by_codeid(database, code_id)
+        database.loc[index, COLUMNS["en_row_code_id"]] = en_row_code_id
+        database.loc[index, COLUMNS["beginning_date"]] = beginning_date
+        return database
